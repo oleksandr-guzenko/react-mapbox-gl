@@ -1,0 +1,26 @@
+{
+  "name": "mock-api",
+  "version": "1.1.0",
+  "main": "serve.js",
+  "license": "MIT",
+  "scripts": {
+    "serve": "node serve.js",
+    "start": "node serve.js",
+    "watch": "npx nodemon serve.js",
+    "make-random-fields": "node .scripts/make-random-fields.js"
+  },
+  "dependencies": {
+    "chalk": "^3.0.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "morgan": "^1.10.0",
+    "nodemon": "^2.0.15"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^7.1.0",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-config-node": "^4.0.0",
+    "geojson-random": "^0.5.0"
+  }
+}

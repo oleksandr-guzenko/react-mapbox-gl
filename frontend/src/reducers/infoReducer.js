@@ -1,16 +1,33 @@
 import { 
-    GET_ALL_INFO
+    GET_ALL_INFO,
+    GET_RESULTS,
+    GET_CURRENT
  } from "../actions/types";
 
 const initialState = {
-    info: [],
-    current: {}
+    all: [],
+    current: {},
+    results: [],
+    loading: true
 }
 
 export default (state = initialState, action) => {
   switch (action.type) {
 
   case GET_ALL_INFO:
+    return { 
+        ...state, 
+        all: action.payload,
+        loading: false 
+    }
+  
+  case GET_RESULTS:
+    return { 
+        ...state, 
+        rseults: action.payload 
+    }
+
+  case GET_CURRENT:
     return { 
         ...state, 
         current: action.payload 

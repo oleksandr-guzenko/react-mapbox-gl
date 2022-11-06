@@ -27,7 +27,7 @@ const listOfFields = {
   fields: Object.keys(data).map((id) => ({
     id,
     name: data[id].name,
-    type: data[id].type,
+    type: data[id].type
   })),
 };
 
@@ -132,8 +132,8 @@ app.use(queryParamMiddleware);
 app.get("/fields", (req, res) => {
   // console.log(req.query);
   if ("all" in req.query) {
-    console.log('all');
-    res.send(listOfFields);
+    // console.log('all');
+    res.send(data);
   }
   // Just send the first page if there is no page query
   else if (!("page" in req.query)) {

@@ -77,7 +77,7 @@ function StyleControls(props) {
   };
 
   return (
-    <div className="control-panel">
+    <div className="control-panel d-none">
       <h3>Dynamic Styling</h3>
       <p>Dynamically show/hide map layers and change color with Immutable map style.</p>
       <div className="source-link">

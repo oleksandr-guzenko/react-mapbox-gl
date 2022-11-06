@@ -8,7 +8,8 @@ const initialState = {
     all: [],
     current: {},
     results: [],
-    loading: true
+    loading: true,
+    resultLoading: false
 }
 
 export default (state = initialState, action) => {

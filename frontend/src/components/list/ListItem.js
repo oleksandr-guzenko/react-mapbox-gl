@@ -4,6 +4,7 @@ import GeoJSONArea from "@mapbox/geojson-area";
 import { useSelector, useDispatch } from 'react-redux';
 
 import { getCurrent } from "../../actions/infoActions";
+import { ScaleControl } from 'react-map-gl';
 
 function ListItem(props) {
     const item = props.item;
@@ -11,11 +12,13 @@ function ListItem(props) {
     const coordinates = item.geoData.features[0].geometry.coordinates;
     const dispatch = useDispatch();
     let points = [];
-    let max =  -1000000;
-    let min = 1000000;
     let delta = 0;
     let country = '';
     let areaInSquaredMeters = item.area;
+    let min_x = 100000;
+    let min_y = 100000;
+    let max_x = -100000;
+    let max_y = -100000;
 
     switch(item.countryCode) {
         case 'UK': country = 'gb'; break;
@@ -32,17 +35,28 @@ function ListItem(props) {
         points.push(coordinates[0][i][0]);
         points.push(coordinates[0][i][1]);
     }
-
-    for(let i = 0; i < points.length; i ++) {
-        if(points[i] > max) max = points[i];
-        if(points[i] < min) min = points[i];
-    }
-
-    // if(min < 0) {
-    for(let i = 0; i < points.length; i ++) {
-        points[i] = (points[i] - min);
-    }
     
+    for(let i = 0; i < points.length; i += 2) {
+        if(points[i] < min_x) min_x = points[i];
+        if(points[i + 1] < min_y) min_y = points[i + 1];
+    }
+
+    for(let i = 0; i < points.length; i += 2) {
+        points[i] -= min_x;
+        points[i + 1] -= min_y;
+    }
+
+    for(let i = 0; i < points.length; i += 2) {
+        if(points[i] > max_x) max_x = points[i];
+        if(points[i + 1] > max_y) max_y = points[i + 1];
+    }
+
+    for(let i = 0; i < points.length; i ++) {
+        if(max_x > max_y) {
+            points[i] = points[i] * 80 / max_x;
+        } else points[i] = points[i] * 80 / max_y;
+    }
+
     if(area === 'Ac') areaInSquaredMeters = (areaInSquaredMeters * 0.000247105).toFixed(2);
     else areaInSquaredMeters = (areaInSquaredMeters * 0.0001).toFixed(2);
 
@@ -50,20 +64,23 @@ function ListItem(props) {
         <div className="list-group-item list-group-item-action" style={{ cursor: 'pointer'}} onClick={e => dispatch(getCurrent(item))}>
             <div className="d-flex">
                 <div className='mr-2'>
-                    <svg height="200" width="200">
-                        <polygon 
-                            points={points.toString()}
-                            style={{fill:'#aaa'}} 
-                        />
+                    <svg height="80" width="80" style={{transform: 'scale(1, -1)'}}>
+                        {points.toString().indexOf('NaN') === -1 && 
+                        (
+                            <polygon 
+                                points={points.toString()}
+                                style={{fill:'#aaa'}} 
+                            />
+                        )}
                     </svg>
                 </div>
                 <div>
-                    <div className='d-flex'>
+                    <div className='d-flex' style={{ fontSize: '20px'}}>
                         <span>{ icons[item.type] }</span>
                         <span className={`fi fi-${country} ml-2 mr-2`}></span>
                         <b>{item.name}</b>
                     </div>
-                    <div>{areaInSquaredMeters} {area.toLowerCase()}</div>
+                    <div style={{ fontSize: '24px'}}>{areaInSquaredMeters} {area.toLowerCase()}</div>
                 </div>
             </div>
         </div>

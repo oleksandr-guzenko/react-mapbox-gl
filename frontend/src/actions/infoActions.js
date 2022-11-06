@@ -11,7 +11,7 @@ import store from '../store';
 
 export const getAllInfo = () => dispatch => {
     axios
-        .get('http://localhost:8000/fields?all&succeed')
+        .get('http://localhost:8000/fields?all&succeed&fast')
         .then(res => {
             let data = [];
             const keys = Object.keys(res.data);

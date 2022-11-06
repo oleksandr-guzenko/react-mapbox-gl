@@ -1,14 +1,27 @@
 import React from 'react'
 import Flag from "react-world-flags";
 import GeoJSONArea from "@mapbox/geojson-area";
+import { useSelector, useDispatch } from 'react-redux';
+
+import { getCurrent } from "../../actions/infoActions";
 
 function ListItem(props) {
     const item = props.item;
+    const area = props.area;
     const coordinates = item.geoData.features[0].geometry.coordinates;
+    const dispatch = useDispatch();
     let points = [];
     let max =  -1000000;
     let min = 1000000;
     let delta = 0;
+    let country = '';
+    let areaInSquaredMeters = item.area;
+
+    switch(item.countryCode) {
+        case 'UK': country = 'gb'; break;
+        default: country = item.countryCode.toLowerCase();
+    }
+
     const icons = {
         corporate: '🏦',
         collective: '👥',
@@ -25,36 +38,32 @@ function ListItem(props) {
         if(points[i] < min) min = points[i];
     }
 
-    delta = Math.abs(min);
-
+    // if(min < 0) {
     for(let i = 0; i < points.length; i ++) {
-        points[i] = (points[i] + delta) * 50 / (max + delta);
+        points[i] = (points[i] - min);
     }
     
-    const areaInSquaredMeters = (GeoJSONArea.geometry(item.geoData.features[0].geometry) * 0.000247105).toFixed(2);
+    if(area === 'Ac') areaInSquaredMeters = (areaInSquaredMeters * 0.000247105).toFixed(2);
+    else areaInSquaredMeters = (areaInSquaredMeters * 0.0001).toFixed(2);
 
     return (
-        <div className="list-group-item list-group-item-action" style={{ cursor: 'pointer'}}>
+        <div className="list-group-item list-group-item-action" style={{ cursor: 'pointer'}} onClick={e => dispatch(getCurrent(item))}>
             <div className="d-flex">
                 <div className='mr-2'>
-                    <svg height="50" width="50">
+                    <svg height="200" width="200">
                         <polygon 
                             points={points.toString()}
-                            style={{
-                                fill:'#aaa', 
-                                stroke: '#aaa',
-                                strokeWidth:1}} 
+                            style={{fill:'#aaa'}} 
                         />
                     </svg>
                 </div>
                 <div>
                     <div className='d-flex'>
                         <span>{ icons[item.type] }</span>
-                        <img src="assets/flags/ac.svg" alt="" className='d-inline' width="30px"/>
-                        {/* <Flag code={item.countryCode} height="16" /> */}
-                        <b> {item.name}</b>
+                        <span className={`fi fi-${country} ml-2 mr-2`}></span>
+                        <b>{item.name}</b>
                     </div>
-                    <div>{areaInSquaredMeters} ac</div>
+                    <div>{areaInSquaredMeters} {area.toLowerCase()}</div>
                 </div>
             </div>
         </div>

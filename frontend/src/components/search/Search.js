@@ -1,28 +1,24 @@
-import React, {useEffect} from 'react'
+import React, {useEffect, useState} from 'react'
 import { useDispatch, useSelector } from "react-redux";
-
-import { getAllInfo } from "../../actions/infoActions";
+import { search } from "../../actions/infoActions";
 
 function Search() {
     const dispatch = useDispatch();
-    const loading = useSelector(state => state.info.loading);
-    
-    useEffect(() => {
-        dispatch(getAllInfo());
-    }, [])
+    const [word, setWord] = useState('');
+
+    const submit = e => {
+        if(e.code === 'Enter') {
+            dispatch(search(word));
+        }
+    }
 
     return (
         <div>
             <div>
-                { loading && <div className='text-center pt-3'><div className="spinner-border text-muted"></div></div> }
-                { !loading && 
-                (
-                    <div className="form-group">
-                        <label htmlFor="search">Search</label>
-                        <input type="text" name="search" id="search" className="form-control" />
-                    </div>
-                )}
-                
+                <div className="form-group">
+                    <label htmlFor="search">Search</label>
+                    <input type="text" name="search" id="search" className="form-control" onChange={e => setWord(e.target.value)} onKeyUp={e => submit(e)}/>
+                </div>
             </div>
         </div>
     )

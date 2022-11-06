@@ -24,7 +24,7 @@ export default (state = initialState, action) => {
   case GET_RESULTS:
     return { 
         ...state, 
-        rseults: action.payload 
+        results: action.payload 
     }
 
   case GET_CURRENT:
